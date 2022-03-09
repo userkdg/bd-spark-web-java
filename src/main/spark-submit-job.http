@@ -1,0 +1,96 @@
+
+
+### mysql数据库导出
+POST http://192.168.235.12:8079/spark/export
+#POST http://192.168.39.11:8079/spark/export
+Content-Type: application/json
+
+{
+    "dbType": "mysql",
+    "url": "jdbc:mysql://192.168.234.8:4401/data_asset_platform?serverTimezone=UTC&useSSL=false",
+    "driverClassName": "com.mysql.cj.jdbc.Driver",
+    "userName": "sharding",
+    "password": "HGbZYrqlpr25",
+    "sql": "select a.*, b.field_name, b.data_type from dap_data_model_table a left join dap_data_model_table_field b on b.model_table_id = a.id limit 100",
+    "targetFileType": "csv",
+    "targetFilePath": "hdfs://nameservice1/home/data_tool/bd-spark-data-secure-export/export-data/dap_data_model_table_and_field",
+    "targetSaveAsHiveTable": "dap_data_model_table_and_field",
+    "targetHiveDatabaseName": "dap_data_secure",
+    "jarPath": "hdfs://nameservice1/home/data_tool/bd-spark-data-secure-export/jars/bd-spark-job.jar",
+    "mainClass": "cn.com.bluemoon.dataserver.apitable.source.job.spark.DataSecureDbExportSparkJob",
+    "deployMode": "client",
+    "master": "yarn",
+    "driverMemory": "1g",
+    "executorMemory": "1g",
+    "executorCores": "1",
+    "appName": "bd-spark-data-secure-export-dap_data_model_table_field"
+}
+
+
+### pg数据库导出
+POST http://192.168.235.12:8079/spark/export
+#POST http://192.168.39.11:8079/spark/export
+Content-Type: application/json
+
+{
+    "dbType": "postgresql",
+    "url": "jdbc:postgresql://192.168.235.3:5432/dw",
+    "driverClassName": "org.postgresql.Driver",
+    "userName": "readonly_gov",
+    "password": "qslu#&87",
+    "sql": "select * from bluemoon.dim_ec_pub_product_master_data limit 1000",
+    "targetFileType": "csv",
+    "targetFilePath": "hdfs://nameservice1/home/data_tool/bd-spark-data-secure-export/export-data/ods_bm_de_20220222_0009",
+    "targetSaveAsHiveTable": "ods_bm_de_20220222_0009",
+    "targetHiveDatabaseName": "dap_data_secure",
+    "jarPath": "hdfs://nameservice1/home/data_tool/bd-spark-data-secure-export/jars/bd-spark-job.jar",
+    "mainClass": "cn.com.bluemoon.dataserver.apitable.source.job.spark.DataSecureDbExportSparkJob",
+    "deployMode": "client",
+    "master": "yarn",
+    "driverMemory": "1g",
+    "executorMemory": "1g",
+    "executorCores": "1",
+    "fieldDesensitizationRulers": {
+        "product_sname": {
+            "type": "dataCut",
+            "props": {
+                "startIndex": "3",
+                "endIndex": "-1"
+            }
+        },
+        "data_id": {
+            "type": "dataFuzzing",
+            "props": {
+                "startIndex": "5",
+                "endIndex": ""
+            }
+        }
+    }
+}
+
+
+
+### hive数据库导出
+POST http://192.168.235.12:8079/spark/export
+Content-Type: application/json
+
+{
+    "dbType": "hive",
+    "url": "",
+    "driverClassName": "org.apache.hive.jdbc.HiveDriver",
+    "userName": "hive",
+    "password": "hive",
+    "sql": "select * from dap_data_secure.dap_data_model",
+    "targetFileType": "csv",
+    "targetFilePath": "hdfs://nameservice1/home/data_tool/bd-spark-data-secure-export/export-data/dap_data_model",
+    "targetSaveAsHiveTable": "dap_data_model",
+    "targetHiveDatabaseName": "dap_data_secure",
+    "jarPath": "hdfs://nameservice1/home/data_tool/bd-spark-data-secure-export/jars/bd-spark-job.jar",
+    "mainClass": "cn.com.bluemoon.dataserver.apitable.source.job.spark.DataSecureDbExportSparkJob",
+    "deployMode": "client",
+    "master": "yarn",
+    "driverMemory": "1g",
+    "executorMemory": "1g",
+    "executorCores": "1"
+}
+
