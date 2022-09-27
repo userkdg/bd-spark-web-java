@@ -3,6 +3,7 @@ package cn.com.bluemoon.dataserver.apitable.source.job.spark.controller;
 import cn.com.bluemoon.dataserver.apitable.source.job.spark.DataBaseExtractorVo;
 import cn.com.bluemoon.dataserver.apitable.source.job.spark.service.ISparkSubmitService;
 import cn.com.bluemoon.dataserver.apitable.source.job.spark.vo.Result;
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -30,14 +31,15 @@ public class SparkController {
     @PostMapping("/spark/export")
     public Object export(@RequestBody DataBaseExtractorVo vo) {
         try {
-            if (StringUtils.isEmpty(vo.getAppName())){
+            if (StringUtils.isEmpty(vo.getAppName())) {
                 vo.setAppName("bd-spark-dap-job");
             }
-            return iSparkSubmitService.submitApplication(vo.buildSparkApplicationParam(), vo);
+            return iSparkSubmitService.submitApplication(vo.buildSparkApplicationParam(), vo, vo.isAsync());
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             log.error("执行出错：{}", e.getMessage());
-            return Result.err(500, e.getMessage());
+            return JSON.toJSONString(Result.err(500, e.getMessage()));
         }
     }
+
 }

@@ -31,14 +31,14 @@ public class HttpUtil {
 			Thread.sleep(500);
 		}
 		//将返回的值存入到String中
-		BufferedReader brd = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
-		StringBuilder sb = new StringBuilder();
-		String line;
-		while ((line = brd.readLine()) != null) {
-			sb.append(line);
-		}
-		brd.close();
-		connection.disconnect();
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader brd = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = brd.readLine()) != null) {
+                sb.append(line);
+            }
+        }
+        connection.disconnect();
 		return sb.toString();
 	}
 }
